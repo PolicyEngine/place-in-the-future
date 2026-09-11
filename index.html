@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who lives near the pilot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#319795; --teal-600:#2C7A7B; --teal-900:#1D4044; --teal-100:#B2F5EA; --teal-50:#E6FFFA;
+    --ink:#101828; --body:#475569; --muted:#64748B; --line:#E2E8F0; --bg:#F2F4F7; --card:#FFFFFF;
+    --warn-bg:#FFF7DB; --warn-line:#FEC601;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--body);font:15px/1.5 Inter,-apple-system,"Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:16px}
+  .banner{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:8px;padding:10px 14px;color:var(--ink);font-weight:500;margin-bottom:16px}
+  .banner span{font-weight:400;color:var(--body)}
+  header h1{font-size:26px;line-height:1.15;color:var(--ink);margin:0 0 4px;font-weight:700;letter-spacing:-0.01em}
+  header p{margin:0 0 16px;color:var(--body)}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+  .controls label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+  .controls select{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .card.wide{grid-column:1/-1}
+  .k{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal-600);margin:0 0 8px;font-weight:600}
+  .card h2{font-size:17px;color:var(--ink);margin:0 0 10px;font-weight:600}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .stat b{display:block;font-size:22px;color:var(--ink);font-weight:700;letter-spacing:-0.01em}
+  .stat span{font-size:13px;color:var(--muted)}
+  .bars{display:grid;gap:8px;margin-top:6px}
+  .row{display:grid;grid-template-columns:96px 1fr 72px;align-items:center;gap:10px;font-size:13px}
+  .row .lab{color:var(--muted)}
+  .track{position:relative;height:14px;background:var(--bg);border-radius:7px;overflow:hidden}
+  .track i{position:absolute;top:0;bottom:0;left:50%;width:0;background:var(--teal);border-radius:7px}
+  .track i.neg{background:#94A3B8}
+  .track:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line)}
+  .row .val{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+  ul.rules{list-style:none;margin:0;padding:0}
+  ul.rules li{display:grid;grid-template-columns:1fr auto;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px;color:var(--ink)}
+  ul.rules li:first-child{border-top:0}
+  ul.rules li em{font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}
+  .who{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:13px}
+  .who div b{display:block;color:var(--ink);font-weight:600;margin-bottom:2px}
+  footer{margin-top:16px;font-size:12px;color:var(--muted)}
+  footer a{color:var(--teal-600);text-decoration:none}
+  @media (max-width:640px){.controls,.grid{grid-template-columns:1fr}.stats,.who{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="banner">Dummy module. <span>Every number on this page is a placeholder for the shape of the answer, not a result.</span></div>
+
+  <header>
+    <h1>Who lives near the pilot</h1>
+    <p>Household numbers for one place, under each alternative on the table.</p>
+  </header>
+
+  <div class="controls">
+    <div><label for="place">Place</label><select id="place"></select></div>
+    <div><label for="alt">Alternative</label><select id="alt"></select></div>
+  </div>
+
+  <div class="grid">
+    <section class="card wide">
+      <p class="k">01 / The households</p>
+      <h2 id="h-place">Within two miles of the site</h2>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <section class="card">
+      <p class="k">02 / Electricity bills</p>
+      <h2>Change in the annual bill, by income fifth</h2>
+      <div class="bars" id="bills"></div>
+    </section>
+
+    <section class="card">
+      <p class="k">03 / After taxes and benefits</p>
+      <h2>Change in net income, jobs and bills together, by income fifth</h2>
+      <div class="bars" id="net"></div>
+    </section>
+
+    <section class="card">
+      <p class="k">04 / Rules in the area that bear on development</p>
+      <h2>What the project runs under</h2>
+      <ul class="rules" id="rules"></ul>
+    </section>
+
+    <section class="card">
+      <p class="k">05 / Who builds what</p>
+      <h2>The same table, with real numbers</h2>
+      <div class="who">
+        <div><b>Microcosm</b>builds the households of the place, calibrated to published totals.</div>
+        <div><b>PolicyEngine</b>runs current tax and benefit law over them under each alternative.</div>
+        <div><b>Axiom</b>encodes the rules the project runs under, cited to their source.</div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+// MOCK_DATA: placeholders only. Places are the ones the site's evidence library cites.
+// Nothing here is computed; every value is typed in to show the shape of the module.
+const MOCK_DATA = {
+  places: {
+    loudoun:  { name: "Loudoun County, Virginia",   households: "9,400", renters: "38%", income: "$118k" },
+    chandler: { name: "Chandler, Arizona",           households: "12,100", renters: "44%", income: "$92k" },
+    warren:   { name: "Warren County, Kentucky",     households: "3,800", renters: "51%", income: "$58k" },
+  },
+  alternatives: {
+    proposed: { name: "As proposed" },
+    compact:  { name: "With the community compact" },
+    nobuild:  { name: "No build" },
+  },
+  // annual change in dollars, by income fifth (lowest first); positive = households pay more
+  bills: {
+    proposed: [ 140,  150,  165,  190,  240],
+    compact:  [   0,    0,   20,   60,  120],
+    nobuild:  [   0,    0,    0,    0,    0],
+  },
+  // annual change in net income after taxes and benefits, by income fifth (lowest first):
+  // the jobs the project brings and the bills it raises, run through current law together
+  net: {
+    proposed: [  40,   60,   20, -120, -200],
+    compact:  [  90,   80,   40,  -40, -110],
+    nobuild:  [   0,    0,    0,    0,    0],
+  },
+  rules: [
+    ["Zoning: special exception for data centers", "placeholder"],
+    ["Sales and use tax on data center equipment", "placeholder"],
+    ["Personal property tax on computer equipment", "placeholder"],
+    ["Large-load electric service tariff", "placeholder"],
+    ["Local siting and noise review", "placeholder"],
+  ],
+};
+
+const fifths = ["Lowest fifth", "Second", "Middle", "Fourth", "Highest fifth"];
+const $ = (id) => document.getElementById(id);
+const usd = (n) => (n < 0 ? "−$" : n > 0 ? "+$" : "$") + Math.abs(n).toLocaleString("en-US");
+
+function fill(select, obj) {
+  select.innerHTML = Object.entries(obj).map(([k, v]) => `<option value="${k}">${v.name}</option>`).join("");
+}
+function bars(id, values) {
+  const max = 260; // fixed scale so alternatives compare visually
+  $(id).innerHTML = values.map((v, i) => {
+    const w = Math.min(50, Math.abs(v) / max * 50);
+    const style = v >= 0 ? `left:50%;width:${w}%` : `left:${50 - w}%;width:${w}%`;
+    return `<div class="row"><span class="lab">${fifths[i]}</span><span class="track"><i class="${v < 0 ? "neg" : ""}" style="${style}"></i></span><span class="val">${usd(v)}</span></div>`;
+  }).join("");
+}
+function render() {
+  const p = MOCK_DATA.places[$("place").value];
+  const a = $("alt").value;
+  $("h-place").textContent = `Within two miles of the site, ${p.name}`;
+  $("stats").innerHTML = [
+    [p.households, "households"], [p.renters, "renting"], [p.income, "median household income"],
+  ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
+  bars("bills", MOCK_DATA.bills[a]);
+  bars("net", MOCK_DATA.net[a]);
+  $("rules").innerHTML = MOCK_DATA.rules.map(([r, s]) => `<li>${r}<em>${s}</em></li>`).join("");
+  $("foot").textContent = `Placeholder numbers under "${MOCK_DATA.alternatives[a].name}" for ${p.name}. A pilot replaces every figure with the place's own households, its rules, and the alternatives on the table.`;
+  if (window.parent !== window) window.parent.postMessage({ type: "place-module-height", height: document.documentElement.scrollHeight }, "*");
+}
+fill($("place"), MOCK_DATA.places);
+fill($("alt"), MOCK_DATA.alternatives);
+$("place").addEventListener("change", render);
+$("alt").addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
