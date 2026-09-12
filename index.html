@@ -72,7 +72,7 @@
 
     <section class="card">
       <p class="k">02 / Electricity bills</p>
-      <h2>Change in the annual bill, by income fifth</h2>
+      <h2>Change in the annual bill, imputed use times the tariff change, by income fifth</h2>
       <div class="bars" id="bills"></div>
     </section>
 
@@ -92,9 +92,9 @@
       <p class="k">05 / Who builds what</p>
       <h2>The same table, with real numbers</h2>
       <div class="who">
-        <div><b>Microcosm</b>builds the households of the place, calibrated to published totals.</div>
-        <div><b>PolicyEngine</b>runs current tax and benefit law over them under each alternative.</div>
-        <div><b>Axiom</b>encodes the rules the project runs under, cited to their source.</div>
+        <div><b>Microcosm</b>builds the households of the place and their electricity use, calibrated to published totals.</div>
+        <div><b>PolicyEngine</b>runs current tax and benefit law, and the compact's own terms, over them under each alternative.</div>
+        <div><b>Axiom</b>encodes the tariff, the compact, and the local rules, cited to their source.</div>
       </div>
     </section>
   </div>
@@ -107,16 +107,19 @@
 // Nothing here is computed; every value is typed in to show the shape of the module.
 const MOCK_DATA = {
   places: {
-    loudoun:  { name: "Loudoun County, Virginia",   households: "9,400", renters: "38%", income: "$118k" },
-    chandler: { name: "Chandler, Arizona",           households: "12,100", renters: "44%", income: "$92k" },
-    warren:   { name: "Warren County, Kentucky",     households: "3,800", renters: "51%", income: "$58k" },
+    loudoun:  { name: "Loudoun County, Virginia",  households: "9,400",  renters: "38%", income: "$118k", scale: 1.0,
+      rules: ["Zoning: special exception for data centers", "State sales and use tax exemption on data center equipment", "County tax on computer equipment", "Large-load electric service tariff", "County siting and noise review"] },
+    chandler: { name: "Chandler, Arizona",          households: "12,100", renters: "44%", income: "$92k",  scale: 1.35,
+      rules: ["Zoning: planned area development approval", "State transaction privilege tax exemption for data centers", "Water use and drought contingency review", "Large-load electric service tariff", "City noise and lighting ordinance"] },
+    warren:   { name: "Warren County, Kentucky",    households: "3,800",  renters: "51%", income: "$58k",  scale: 0.7,
+      rules: ["Zoning: conditional use permit", "State sales tax exemption on data center equipment", "Industrial revenue bond property tax abatement", "Large-load electric service tariff", "County siting review"] },
   },
   alternatives: {
     proposed: { name: "As proposed" },
     compact:  { name: "With the community compact" },
     nobuild:  { name: "No build" },
   },
-  // annual change in dollars, by income fifth (lowest first); positive = households pay more
+  // annual change in the electricity bill in dollars, by income fifth (lowest first), before the place scale
   bills: {
     proposed: [ 140,  150,  165,  190,  240],
     compact:  [   0,    0,   20,   60,  120],
@@ -129,13 +132,6 @@ const MOCK_DATA = {
     compact:  [  90,   80,   40,  -40, -110],
     nobuild:  [   0,    0,    0,    0,    0],
   },
-  rules: [
-    ["Zoning: special exception for data centers", "placeholder"],
-    ["Sales and use tax on data center equipment", "placeholder"],
-    ["Personal property tax on computer equipment", "placeholder"],
-    ["Large-load electric service tariff", "placeholder"],
-    ["Local siting and noise review", "placeholder"],
-  ],
 };
 
 const fifths = ["Lowest fifth", "Second", "Middle", "Fourth", "Highest fifth"];
@@ -160,9 +156,10 @@ function render() {
   $("stats").innerHTML = [
     [p.households, "households"], [p.renters, "renting"], [p.income, "median household income"],
   ].map(([b, s]) => `<div class="stat"><b>${b}</b><span>${s}</span></div>`).join("");
-  bars("bills", MOCK_DATA.bills[a]);
-  bars("net", MOCK_DATA.net[a]);
-  $("rules").innerHTML = MOCK_DATA.rules.map(([r, s]) => `<li>${r}<em>${s}</em></li>`).join("");
+  const scaled = (xs) => xs.map((v) => Math.round(v * p.scale / 5) * 5);
+  bars("bills", scaled(MOCK_DATA.bills[a]));
+  bars("net", scaled(MOCK_DATA.net[a]));
+  $("rules").innerHTML = p.rules.map((r) => `<li>${r}<em>placeholder</em></li>`).join("");
   $("foot").textContent = `Placeholder numbers under "${MOCK_DATA.alternatives[a].name}" for ${p.name}. A pilot replaces every figure with the place's own households, its rules, and the alternatives on the table.`;
   if (window.parent !== window) window.parent.postMessage({ type: "place-module-height", height: document.documentElement.scrollHeight }, "*");
 }
