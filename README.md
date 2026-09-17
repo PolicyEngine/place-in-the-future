@@ -18,3 +18,7 @@ Single file, no build step, no dependencies beyond the Inter font. It is iframe-
 ## What a pilot replaces
 
 Microcosm builds the households of the place, calibrated to published totals. PolicyEngine runs current tax and benefit law over them under each alternative. Axiom encodes the rules the project runs under, cited to their source. The rules list, the bill changes, and the net-income changes are all placeholders until then.
+
+## License
+
+Code in this repository is released under the [MIT License](LICENSE). Original text and figures are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) with attribution to PolicyEngine. Third-party data and materials keep their own terms.
